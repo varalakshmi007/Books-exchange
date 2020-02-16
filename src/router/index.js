@@ -24,12 +24,48 @@ const router = new VueRouter({
     // Auth routes
     {
       path: "/add-book",
+      name: "add-book",
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () =>
+        import(/* webpackChunkName: "add-book" */ "../views/add-book.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/dashboard",
       name: "dashboard",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "dashboard" */ "../views/Dashboard.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/book-requests",
+      name: "requests",
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () =>
+        import(/* webpackChunkName: "request" */ "../views/Requests.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/received-books",
+      name: "received",
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () =>
+        import(/* webpackChunkName: "received" */ "../views/Received.vue"),
       meta: {
         requiresAuth: true
       }
@@ -42,9 +78,9 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !currentUser) {
-    next("signin");
+    next("/");
   } else if (!requiresAuth && currentUser) {
-    next("add-book");
+    next("dashboard");
   } else {
     next();
   }

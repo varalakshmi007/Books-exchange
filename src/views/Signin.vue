@@ -41,12 +41,6 @@ export default {
       ui = new firebaseui.auth.AuthUI(firebase.auth());
     }
     ui.start("#firebaseui-auth-container", uiConfig);
-  },
-  metaInfo: {
-    title: "Sign in",
-    meta: [
-      { name: "description", content: "To get started, sign in to Pumba." }
-    ]
   }
 };
 </script>

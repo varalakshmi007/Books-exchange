@@ -39,10 +39,6 @@
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
-
-        <v-btn to="/signin" class="hidden-sm-and-down" depressed light
-          >Sign in</v-btn
-        >
       </template>
     </v-app-bar>
 
@@ -79,7 +75,20 @@ export default {
   name: "Navbar",
   data: () => ({
     drawer: null,
-    items: [{ icon: "mdi-calendar", text: "Add book", link: "/add-book" }]
+    items: [
+      { icon: "mdi-book-open-variant", text: "Dashboard", link: "/dashboard" },
+      { icon: "mdi-book-outline", text: "Add book", link: "/add-book" },
+      {
+        icon: "mdi-bookmark-check",
+        text: "Book Requests",
+        link: "/book-requests"
+      },
+      {
+        icon: "mdi-bookmark-check",
+        text: "Received books",
+        link: "/received-books"
+      }
+    ]
   }),
   computed: {
     ...mapGetters({

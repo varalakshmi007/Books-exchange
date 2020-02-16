@@ -1,47 +1,49 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row no-gutters class="my-4">
-      <v-col xs="12" offset-md="2" md="8">
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            v-model="name"
-            :counter="30"
-            :rules="nameRules"
-            label="Book Name"
-            outlined
-            required
-          ></v-text-field>
+  <div class="home">
+    <v-container>
+      <v-row class="mt-12">
+        <v-col v-for="(book, index) in books" :key="book.id" md="4" cols="12">
+          <v-card class="mx-auto" max-width="344" outlined>
+            <v-list-item three-line>
+              <v-list-item-content>
+                <div class="overline mb-4">{{ book.type }}</div>
+                <v-list-item-title class="headline mb-1">{{
+                  book.name
+                }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  book.description
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
-          <v-textarea
-            v-model="description"
-            label="Book description"
-            :rules="desRules"
-            outlined
-            required
-          ></v-textarea>
+            <v-card-actions>
+              <v-btn color="primary" depressed small @click="sendRequest(index)"
+                >Place Request</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-dialog v-model="dialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Owner details</v-card-title>
 
-          <v-select
-            v-model="type"
-            :items="items"
-            :rules="[v => !!v || 'Genre is required']"
-            label="Genre"
-            outlined
-            required
-          ></v-select>
+        <v-card-text>
+          <p>Name: {{ this.name }}</p>
+          <p>Email: {{ this.email }}</p>
+        </v-card-text>
 
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="validate"
-            :loading="loadingAdd"
-          >
-            Submit
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="green darken-1" text @click="dialog = false">
+            Close
           </v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -52,43 +54,48 @@ const db = firebase.firestore();
 export default {
   name: "Dashboard",
   data: () => ({
-    loadingAdd: false,
-    valid: "",
+    books: [],
+    dialog: false,
     name: "",
-    description: "",
-    type: "",
-    nameRules: [
-      v => !!v || "Name is required",
-      v => (v && v.length <= 30) || "Name must be less than 30 characters"
-    ],
-    desRules: [v => !!v || "Description is required"],
-    items: ["Fiction", "Non-fiction", "Academics", "Auto-biography", "History"]
+    email: ""
   }),
+  mounted() {
+    this.getBooks();
+  },
   methods: {
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.loadingAdd = true;
-        let self = this;
-
-        const currentUser = firebase.auth().currentUser;
-
-        db.collection("books")
-          .add({
-            name: this.name,
-            description: this.description,
-            type: this.type,
-            email: currentUser.email,
-            user: currentUser.displayName
-          })
-          .then(function(docRef) {
-            // Reset form
-            self.$refs.form.reset();
-            self.loadingAdd = false;
-          })
-          .catch(function(error) {
-            console.error("Error adding document: ", error);
+    getBooks() {
+      const self = this;
+      db.collection("books")
+        .where("done", "==", false)
+        .get()
+        .then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            let book = doc.data();
+            book.id = doc.id;
+            self.books.push(book);
           });
-      }
+        });
+    },
+    sendRequest(index) {
+      const currentUser = firebase.auth().currentUser;
+      let self = this;
+      db.collection("books")
+        .doc(this.books[index].id)
+        .set(
+          {
+            request: true,
+            request_email: currentUser.email,
+            request_user: currentUser.displayName,
+            request_uid: currentUser.uid
+          },
+          { merge: true }
+        )
+        .then(function(docRef) {
+          self.books.splice(index, 1);
+        })
+        .catch(function(error) {
+          // console.error("Error adding document: ", error);
+        });
     }
   }
 };
