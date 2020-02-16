@@ -44,7 +44,7 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !currentUser) {
     next("signin");
   } else if (!requiresAuth && currentUser) {
-    next("dashboard");
+    next("add-book");
   } else {
     next();
   }

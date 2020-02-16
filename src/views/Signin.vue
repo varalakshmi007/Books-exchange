@@ -34,10 +34,6 @@ export default {
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.EmailAuthProvider.PROVIDER_ID
       ],
-      // Terms of service url.
-      tosUrl: "/terms-of-service",
-      // Privacy policy url.
-      privacyPolicyUrl: "/privacy-policy",
       credentialHelper: "none"
     };
     let ui = firebaseui.auth.AuthUI.getInstance();
