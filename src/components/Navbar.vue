@@ -26,6 +26,9 @@
           </template>
           <v-list class="text-center">
             <v-list-item>
+              <v-btn to="/profile" text>Profile</v-btn>
+            </v-list-item>
+            <v-list-item>
               <v-btn @click.prevent="signOut" text>Sign out</v-btn>
             </v-list-item>
           </v-list>

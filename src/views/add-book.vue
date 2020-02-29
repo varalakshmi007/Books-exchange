@@ -1,7 +1,8 @@
 <template>
   <v-container fluid class="fill-height">
-    <v-row no-gutters class="my-4">
+    <v-row no-gutters class="mb-4">
       <v-col xs="12" offset-md="2" md="8">
+        <h3 class="text-center mb-10">Add a book</h3>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="name"
